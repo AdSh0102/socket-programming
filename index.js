@@ -16,9 +16,12 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
     console.log("a user connected");
-    socket.on("chat message", (msg) => {
-        io.emit('chat message', msg);
-        console.log("message: " + msg);
+    socket.on("request", (arg1, arg2, callback) => {
+        console.log(arg1); // { foo: 'bar' }
+        console.log(arg2); // 'baz'
+        callback({
+            status: "ok",
+        });
     });
     socket.on("disconnect", () => {
         console.log("user disconnected");

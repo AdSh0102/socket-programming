@@ -72,17 +72,31 @@
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
                 if (input.value) {
-                    socket.emit("chat message", input.value);
-                    input.value = "";
-                    socket.emit('hello', 'world');
-                }
-            });
+                    let date = new Date();
+                    console.log("starting time", date);
+                    socket.timeout(0).emit(
+                        "request",
+                        input.value,
+                        "baz",
+                        (err, response) => {
+                            if (err) {
+                                console.log(err);
+                                // the server did not acknowledge the event in the given delay
+                            } else {
+                                let date = new Date();
+                                console.log("ending time:", date);
+                                console.log(response.status); // 'ok'
+                            }
+                        }
+                    );
 
-            socket.on("chat message", (msg) => {
-                const item = document.createElement("li");
-                item.textContent = msg;
-                messages.appendChild(item);
-                window.scrollTo(0, document.body.scrollHeight);
+                    // Create a new list item with the message from the input field
+                    const item = document.createElement("li");
+                    item.textContent = input.value; // Use the value from the input field
+                    messages.appendChild(item); // Append the new item to the messages list
+                    window.scrollTo(0, document.body.scrollHeight);
+                    input.value = ""; // Clear the input field
+                }
             });
         </script>
     </body>
